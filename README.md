@@ -40,6 +40,8 @@ python ./src/copyplaylist.py
 
 It will prompt you for your plex username and password.
 
+### Note that your password will appear on the screen!
+
 Then choose the source server by number from the list.
 
 Next, it will list out all playlists on that server, and again choose by entering the number from the list
