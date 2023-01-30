@@ -22,8 +22,8 @@ exactly match, it will show up as missing on a sync so you must manually skip th
 but since my libraries are very close on both servers, it has not been a big concern for me.
 
 Also, there is very little protection built into this script for user error, so please enter all input accurately.  I
-just did this for my own needs quickly, but will probably improve over time.  So when it asks you to choose a number
-of a track in a list, make sure you enter a valid number, or just 'n' if you want to skip that track.
+just did this for my own needs quickly, but will probably improve over time.  So it will crash on things like choosing
+none for a server and the likes.
 
 This code requires python v3.6 or higher.
 
