@@ -41,6 +41,14 @@ def select_item(item_list, prompt, item_format_str):
 
 
 #
+# This method simplifies the string to trimmed whitespace and no special characters all lower case.  Often one of these
+# issues is a source of problems in matching titles.
+#
+def simplify_string(source_str):
+    return ''.join(e for e in source_str if e.isalnum() or e == ' ').strip().lower()
+
+
+#
 # Given a source item, return either the exact match that exists in the target server, or a user chosen item
 # from the closest matches that could be found, or None if no match nor user choice could be found for the source item.
 #
@@ -51,7 +59,8 @@ def find_matching_item(source_item, target_server):
     matching_tracks = target_server.search(source_item.title, mediatype='track', limit=100)
     matched_track = None
     for track in matching_tracks:
-        if track.title == source_item.title and track.parentTitle == source_item.parentTitle:
+        if simplify_string(track.title) == simplify_string(source_item.title) and simplify_string(track.parentTitle) \
+                == simplify_string(source_item.parentTitle):
             print(
                 f"     Found exact match for Title: {track.title}, Album: {track.parentTitle}, Artist: {track.grandparentTitle}")
             matched_track = track
@@ -60,6 +69,7 @@ def find_matching_item(source_item, target_server):
         print("")
         print(
             f"     Did not find an exact match, but these are close matches to Title: {source_item.title}, Album: {source_item.parentTitle}, Artist: {source_item.grandparentTitle}")
+        matching_tracks = target_server.search(simplify_string(source_item.title), mediatype='track', limit=100)
         selection = select_item(matching_tracks, "     Select matching track number or 'n' for None >>>",
                                 "     %(index)x: Title: %(title)s, Album: %(parentTitle)s, Artist: %(grandparentTitle)s"
                                 )
