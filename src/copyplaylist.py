@@ -96,7 +96,16 @@ def main():
     user = input("Enter username: ")
     password = getpass("Enter Password: ")
     
-    two_factor_used = input('Is your account using two factor authentication? (y/n): ').lower().strip() == 'y'
+    while True:
+        two_factor_used = input("Is your account using two factor authentication? (y/n): ").lower().strip()
+        if two_factor_used == "y":
+            two_factor_used = True
+            break
+        elif two_factor_used == "n":
+            two_factor_used = False
+            break
+        else:
+            continue
     
     if two_factor_used:
         code = getpass("Enter Two-Factor Code: ")
