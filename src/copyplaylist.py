@@ -233,10 +233,18 @@ def main():
     for item in unmatched_items:
         print(f"No match for Title: {item.title}, Album: {item.parentTitle}, Artist: {item.grandparentTitle}")
 
+    cls()
+    print("#################")
+    print("#     Done!     #")
+    print("#################")
+    print("")
+    
     if target_playlist is None:
         target_server.createPlaylist(target_playlist_title, items=playlist_items)
+        print("Added new playlist to target server!")
     else:
         target_playlist.addItems(playlist_items)
+        print("Updated playlist on target server!")
 
 
 #
