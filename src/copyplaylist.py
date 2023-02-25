@@ -94,8 +94,15 @@ def find_matching_item(source_item, target_server):
 #
 def main():
     user = input("Enter username: ")
-    account = MyPlexAccount(user, password)
     password = getpass("Enter Password: ")
+    
+    two_factor_used = input('Is your account using two factor authentication? (y/n): ').lower().strip() == 'y'
+    
+    if two_factor_used:
+        code = getpass("Enter Two-Factor Code: ")
+        account = MyPlexAccount(username=user, password=password, code=code)
+    else:
+        account = MyPlexAccount(username=user, password=password)
 
     available_resources = account.resources()
     print("")
