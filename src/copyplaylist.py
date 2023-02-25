@@ -15,7 +15,7 @@ import re
 # uses 'cls' on windows and 'clear' on linux / macos
 #
 def cls():
-    os.system('cls' if os.name=='nt' else 'clear')
+    os.system('cls' if os.name=='nt' else 'printf "\033c"')
 
 #
 # Given a list, select a single item from the list, or return None if they skip the selection
