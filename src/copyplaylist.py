@@ -212,7 +212,7 @@ def main():
         
         cls()
         print("##########################")
-        print("#     Name selection     #")
+        print("#     Finding tracks     #")
         print("##########################")
         print("")
         
