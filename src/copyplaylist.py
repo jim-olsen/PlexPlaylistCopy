@@ -170,7 +170,12 @@ def main():
     print("###########################")
     print("")
     
-    source_playlists = source_server.playlists()
+    source_playlists_unfiltered = source_server.playlists()
+    source_playlists = []
+    
+    for playlist in source_playlists_unfiltered:
+        if playlist.smart == False:
+            source_playlists.append(playlist)
     
     selection = select_item(source_playlists, "\nSelect the number of the playlist you want to copy: ",
                             "%(index)x: %(title)s")
