@@ -1,6 +1,8 @@
 from plexapi.myplex import MyPlexAccount
 from plexapi.exceptions import NotFound
 
+from getpass import getpass
+
 import re
 
 
@@ -92,8 +94,8 @@ def find_matching_item(source_item, target_server):
 #
 def main():
     user = input("Enter username: ")
-    password = input("Enter Password: ")
     account = MyPlexAccount(user, password)
+    password = getpass("Enter Password: ")
 
     available_resources = account.resources()
     print("")
