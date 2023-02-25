@@ -235,9 +235,6 @@ def main():
         if matched_track is not None:
             playlist_items.append(matched_track)
 
-    for item in unmatched_items:
-        print(f"No match for Title: {item.title}, Album: {item.parentTitle}, Artist: {item.grandparentTitle}")
-
     cls()
     print("#################")
     print("#     Done!     #")
@@ -250,6 +247,12 @@ def main():
     else:
         target_playlist.addItems(playlist_items)
         print("Updated playlist on target server!")
+        
+    print("\n\nThe following tracks could not be copied:\n")
+    for item in unmatched_items:
+        print(f"No match for Title: {item.title}, Album: {item.parentTitle}, Artist: {item.grandparentTitle}")
+    
+    
 
 
 #
