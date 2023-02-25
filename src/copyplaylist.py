@@ -87,8 +87,8 @@ def find_matching_item(source_item, target_server):
             selection = select_item(matching_tracks, "\nSelect matching track number or 'n' to skip the track: ",
                                 "     %(index)x: Title: %(title)s, Album: %(parentTitle)s, Artist: %(grandparentTitle)s")
         else:
-            print("No exact match or similar track found.\n")
-            input("(Press enter to continue and skip track)")
+            print("Track not found.\n")
+            time.sleep(1)
             selection = None
             
         if selection is not None:
