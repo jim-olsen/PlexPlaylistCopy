@@ -114,19 +114,25 @@ def main():
         account = MyPlexAccount(username=user, password=password)
 
     available_resources = account.resources()
+    available_servers = []
+    
+    for resource in available_resources:
+        if resource.product == "Plex Media Server":
+            available_servers.append(resource)
+        
     print("")
-    selection = select_item(account.resources(), "Select the server which you wish to copy a playlist from >>>",
+    selection = select_item(available_servers, "Select the server which you wish to copy a playlist from >>>",
                             "%(index)x: %(name)s")
-    source_server = account.resource(available_resources[selection].name).connect()
+    source_server = available_servers[selection].connect()
     source_playlists = source_server.playlists()
     print("")
     selection = select_item(source_playlists, "Select the number of the playlist to copy from >>>",
                             "%(index)x: %(title)s")
     source_playlist = source_playlists[selection]
 
-    selection = select_item(available_resources, "Please select the server you wish to copy the playlist to >>>",
+    selection = select_item(available_servers, "Please select the server you wish to copy the playlist to >>>",
                             "%(index)x: %(name)s")
-    target_server = account.resource(available_resources[selection].name).connect()
+    target_server = available_servers[selection].connect()
 
     print("")
     target_playlist_title = input("Please enter the name to use for the target playlist >>>")
