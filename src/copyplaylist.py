@@ -77,11 +77,16 @@ def simplify_string(source_str):
 #
 # source_item - The item that we should be finding a match for on the target server
 #
-def find_matching_item(source_item, target_server):
+def find_matching_item(source_item, target_server, section=None):
     print("\nSearching for tracks on target server...")
     matching_tracks = target_server.search(source_item.title, mediatype='track', limit=100)
     matched_track = None
     for track in matching_tracks:
+        
+        if section is not None:
+            if track.section().uuid is not section.uuid:
+                continue
+            
         if simplify_string(track.title) == simplify_string(source_item.title) and simplify_string(track.parentTitle) \
                 == simplify_string(source_item.parentTitle) and distance(track.duration, source_item.duration) < 1000:
             print(distance(track.duration, source_item.duration))
@@ -176,6 +181,33 @@ def main():
     target_server = available_servers[selection].connect()
     
     cls()
+    print("#################################")
+    print("#     Select search section     #")
+    print("#################################")
+    print("")
+    
+    while True:
+        use_section_matching = input("Do you want to limit the automatic matching to a section in your library? This is useful when you have multiple versions of the same track (stereo/surround) in different sections (y/n): ").lower().strip()
+        if use_section_matching == "y":
+            use_section_matching = True
+            break
+        elif use_section_matching == "n":
+            use_section_matching = False
+            break
+        else:
+            continue
+    
+    if use_section_matching:
+        print("")
+        sections = target_server.library.sections()
+        
+        selection = select_item(sections, "\nSelect the number of the section the collection is a part of: ",
+                                "%(index)x: %(title)s")
+        
+        target_section = sections[selection]
+    
+    
+    cls()
     print("###########################")
     print("#     Select playlist     #")
     print("###########################")
@@ -237,11 +269,17 @@ def main():
                 target_playlist.item(item.title)
                 print("Found existing entry in playlist, skipping track....")
             else:
-                matched_track = find_matching_item(item, target_server)
+                if use_section_matching:
+                    matched_track = find_matching_item(item, target_server, section=target_section)
+                else:
+                    matched_track = find_matching_item(item, target_server)
                 if matched_track is None:
                     unmatched_items.append(item)
         except NotFound:
-            matched_track = find_matching_item(item, target_server)
+            if use_section_matching:
+                matched_track = find_matching_item(item, target_server, section=target_section)
+            else:
+                matched_track = find_matching_item(item, target_server)
             if matched_track is None:
                 unmatched_items.append(item)
 
