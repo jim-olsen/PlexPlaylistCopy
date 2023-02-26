@@ -89,7 +89,7 @@ def find_matching_item(source_item, target_server, section=None):
             
         if simplify_string(track.title) == simplify_string(source_item.title) and simplify_string(track.parentTitle) \
                 == simplify_string(source_item.parentTitle) and distance(track.duration, source_item.duration) < 1000:
-            print(distance(track.duration, source_item.duration))
+
             print("\nFound exact match!")
             time.sleep(0.3)
             matched_track = track
