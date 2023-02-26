@@ -227,6 +227,8 @@ def main():
                 print("Found existing entry in playlist, skipping track....")
             else:
                 matched_track = find_matching_item(item, target_server)
+                if matched_track is None:
+                    unmatched_items.append(item)
         except NotFound:
             matched_track = find_matching_item(item, target_server)
             if matched_track is None:

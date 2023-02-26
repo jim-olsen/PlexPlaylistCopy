@@ -251,6 +251,8 @@ def main():
                 print("Found existing entry in collection, skipping item....")
             else:
                 matched_item = find_matching_item(item, target_section)
+                if matched_item is None:
+                    unmatched_items.append(item)
         except NotFound:
             matched_item = find_matching_item(item, target_section)
             if matched_item is None:
