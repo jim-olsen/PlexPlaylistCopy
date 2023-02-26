@@ -75,7 +75,7 @@ def find_matching_item(source_item, target_server):
         if simplify_string(track.title) == simplify_string(source_item.title) and simplify_string(track.parentTitle) \
                 == simplify_string(source_item.parentTitle):
             print("\nFound exact match!")
-            time.sleep(1)
+            time.sleep(0.3)
             matched_track = track
             break
     if matched_track is None:
