@@ -11,16 +11,6 @@ import re
 
 
 #
-# Get the positive delta between numbers
-#
-def distance(x, y):
-    if x >= y:
-        result = x - y
-    else:
-        result = y - x
-    return result
-
-#
 # Clear the screen 
 # uses 'cls' on windows and 'clear' on linux / macos
 #
@@ -77,42 +67,36 @@ def simplify_string(source_str):
 #
 # source_item - The item that we should be finding a match for on the target server
 #
-def find_matching_item(source_item, target_server, section=None):
-    print("\nSearching for tracks on target server...")
-    matching_tracks = target_server.search(source_item.title, mediatype='track', limit=100)
-    matched_track = None
+def find_matching_item(source_item, target_server):
+    print("\nSearching for items on target server...")
+    matching_tracks = target_server.search(source_item.title, libtype='album', limit=100)
+    matched_item = None
     for track in matching_tracks:
-        
-        if section is not None:
-            if track.section().uuid is not section.uuid:
-                continue
-            
         if simplify_string(track.title) == simplify_string(source_item.title) and simplify_string(track.parentTitle) \
-                == simplify_string(source_item.parentTitle) and distance(track.duration, source_item.duration) < 1000:
-
+                == simplify_string(source_item.parentTitle):
             print("\nFound exact match!")
             time.sleep(0.3)
-            matched_track = track
+            matched_item = track
             break
-    if matched_track is None:
+    if matched_item is None:
         print("")
         
-        matching_tracks = target_server.search(simplify_string(source_item.title), mediatype='track', limit=100)
+        matching_tracks = target_server.search(simplify_string(source_item.title), libtype='album', limit=100)
         if len(matching_tracks) > 0:
             print("No exact match found, but these are very similar:\n")
-            selection = select_item(matching_tracks, "\nSelect matching track number or 'n' to skip the track: ",
-                                "     %(index)x: Title: %(title)s, Album: %(parentTitle)s, Artist: %(grandparentTitle)s")
+            selection = select_item(matching_tracks, "\nSelect matching album number or 'n' to skip the album: ",
+                                "     %(index)x: Title: %(title)s, Artist: %(parentTitle)s")
         else:
-            print("Track not found.\n")
+            print("Album not found.\n")
             time.sleep(1)
             selection = None
             
         if selection is not None:
-            matched_track = matching_tracks[int(selection)]
-            print(f"     Adding track {matched_track.title}, {matched_track.parentTitle}")
+            matched_item = matching_tracks[int(selection)]
+            print(f"     Adding Album {matched_item.title}, {matched_item.parentTitle}")
             
 
-    return matched_track
+    return matched_item
 
 
 #
@@ -124,9 +108,9 @@ def find_matching_item(source_item, target_server, section=None):
 def main():
     
     cls()
-    print("##############################")
-    print("#     Plex Playlist Copy     #")
-    print("##############################")
+    print("################################")
+    print("#     Plex Collection Copy     #")
+    print("################################")
     print("To start, please log in to your Plex account.")
     print("")
     
@@ -171,58 +155,55 @@ def main():
     available_servers.pop(selection)
     
     cls()
+    print("##########################")
+    print("#     Select section     #")
+    print("##########################")
+    print("")
+    
+    
+    sections = source_server.library.sections()
+    
+    selection = select_item(sections, "\nSelect the number of the section the collection is a part of: ",
+                            "%(index)x: %(title)s")
+                        
+    source_section = sections[selection]
+    
+    cls()
     print("#####################################")
     print("#     Select destination server     #")
     print("#####################################")
     print("")
     
-    selection = select_item(available_servers, "\nSelect the server to which you want to copy the playlist: ",
-                            "%(index)x: %(name)s")
+    selection = select_item(available_servers, "\nSelect the server to which you want to copy the collection: ",
+        "%(index)x: %(name)s")
     target_server = available_servers[selection].connect()
     
     cls()
-    print("#################################")
-    print("#     Select search section     #")
-    print("#################################")
+    print("######################################")
+    print("#     Select destination section     #")
+    print("######################################")
     print("")
     
-    while True:
-        use_section_matching = input("Do you want to limit the automatic matching to a section in your library? This is useful when you have multiple versions of the same track (stereo/surround) in different sections (y/n): ").lower().strip()
-        if use_section_matching == "y":
-            use_section_matching = True
-            break
-        elif use_section_matching == "n":
-            use_section_matching = False
-            break
-        else:
-            continue
+    sections = target_server.library.sections()
     
-    if use_section_matching:
-        print("")
-        sections = target_server.library.sections()
-        
-        selection = select_item(sections, "\nSelect the number of the section the collection is a part of: ",
-                                "%(index)x: %(title)s")
-        
-        target_section = sections[selection]
+    selection = select_item(sections, "\nSelect the number of the section the collection is a part of: ",
+                            "%(index)x: %(title)s")
     
+    target_section = sections[selection]
     
     cls()
-    print("###########################")
-    print("#     Select playlist     #")
-    print("###########################")
+    print("#############################")
+    print("#     Select collection     #")
+    print("#############################")
     print("")
     
-    source_playlists_unfiltered = source_server.playlists()
-    source_playlists = []
+    collections = source_section.collections()
     
-    for playlist in source_playlists_unfiltered:
-        if playlist.smart == False:
-            source_playlists.append(playlist)
-    
-    selection = select_item(source_playlists, "\nSelect the number of the playlist you want to copy: ",
+    selection = select_item(collections, "\nSelect the number of the collection you want to copy: ",
                             "%(index)x: %(title)s")
-    source_playlist = source_playlists[selection]
+    
+    source_collection = collections[selection]
+    
 
     cls()
     print("##########################")
@@ -231,60 +212,54 @@ def main():
     print("")
     
     while True:
-        use_original_name = input("Do you want to keep the same name for the playlist on the destination server? (y/n): ").lower().strip()
+        use_original_name = input("Do you want to keep the same name for the collection on the destination server? (y/n): ").lower().strip()
         if use_original_name == "y":
-            target_playlist_title = source_playlist.title
+            target_collection_title = source_collection.title
             break
         elif use_original_name == "n":
-            target_playlist_title = input("\nEnter the name to be used for the copied playlist: ")
+            target_collection_title = input("\nEnter the name to be used for the copied collection: ")
             break
         else:
             continue
     
     try:
-        target_playlist = target_server.playlist(target_playlist_title)
-        print("Target playlist already exists, all missing tracks will be added.")
+        target_collection = target_section.collection(target_collection_title)
+        print("Target collection already exists, all missing tracks will be added.")
     except NotFound:
-        print("Target playlist does not exist, a new playlist will be created.")
-        target_playlist = None
+        print("Target collection does not exist, a new collection will be created.")
+        target_collection = None
 
-    total_tracks = 0
+    total_items = 0
     unmatched_items = []
-    playlist_items = []
-    for item in source_playlist.items():
+    collection_items = []
+    for item in source_collection.items():
         
         cls()
-        print("##########################")
-        print("#     Finding tracks     #")
-        print("##########################")
+        print("#########################")
+        print("#     Finding items     #")
+        print("#########################")
         print("")
         
-        total_tracks += 1
-        print(f"Attempting to match track #{total_tracks}:\n\nTitle:  {item.title}\nAlbum:  {item.parentTitle}\nArtist: {item.grandparentTitle}\n")
+        total_items += 1
+        print(f"Attempting to match item #{total_items}:\n\nTitle:  {item.title}\nArtist: {item.parentTitle}\n")
         print("-----------------------------")
 
-        matched_track = None
+        matched_item = None
         try:
-            if target_playlist is not None:
-                target_playlist.item(item.title)
-                print("Found existing entry in playlist, skipping track....")
+            if target_collection is not None:
+                target_collection.item(item.title)
+                print("Found existing entry in collection, skipping item....")
             else:
-                if use_section_matching:
-                    matched_track = find_matching_item(item, target_server, section=target_section)
-                else:
-                    matched_track = find_matching_item(item, target_server)
-                if matched_track is None:
+                matched_item = find_matching_item(item, target_section)
+                if matched_item is None:
                     unmatched_items.append(item)
         except NotFound:
-            if use_section_matching:
-                matched_track = find_matching_item(item, target_server, section=target_section)
-            else:
-                matched_track = find_matching_item(item, target_server)
-            if matched_track is None:
+            matched_item = find_matching_item(item, target_section)
+            if matched_item is None:
                 unmatched_items.append(item)
 
-        if matched_track is not None:
-            playlist_items.append(matched_track)
+        if matched_item is not None:
+            collection_items.append(matched_item)
 
     cls()
     print("#################")
@@ -292,20 +267,20 @@ def main():
     print("#################")
     print("")
     
-    if len(playlist_items) > 0:
-        if target_playlist is None:
-            target_server.createPlaylist(target_playlist_title, items=playlist_items)
-            print("Added new playlist to target server!")
+    if len(collection_items) > 0:
+        if target_collection is None:
+            target_section.createCollection(target_collection_title, items=collection_items)
+            print("Added new collection to target server!")
         else:
-            target_playlist.addItems(playlist_items)
-            print("Updated playlist on target server!")
+            target_collection.addItems(collection_items)
+            print("Updated collection on target server!")
     else:
-        print("Playlist could not be copied because no matching tracks could be found. ")
-    
-    if len(unmatched_items) > 0:
-        print("\n\nThe following tracks could not be copied:\n")
-        for item in unmatched_items:
-            print(f"No match for Title: {item.title}, Album: {item.parentTitle}, Artist: {item.grandparentTitle}")
+        print("Collection could not be copied because no matching items could be found. ")
+        
+        
+    print("\n\nThe following items could not be copied:\n")
+    for item in unmatched_items:
+        print(f"No match for Album: {item.title}, Artist: {item.parentTitle}")
     
     
 
