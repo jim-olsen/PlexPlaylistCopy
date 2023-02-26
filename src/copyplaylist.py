@@ -11,6 +11,16 @@ import re
 
 
 #
+# Get the positive delta between numbers
+#
+def distance(x, y):
+    if x >= y:
+        result = x - y
+    else:
+        result = y - x
+    return result
+
+#
 # Clear the screen 
 # uses 'cls' on windows and 'clear' on linux / macos
 #
@@ -73,7 +83,8 @@ def find_matching_item(source_item, target_server):
     matched_track = None
     for track in matching_tracks:
         if simplify_string(track.title) == simplify_string(source_item.title) and simplify_string(track.parentTitle) \
-                == simplify_string(source_item.parentTitle) and track.duration == source_item.duration:
+                == simplify_string(source_item.parentTitle) and distance(track.duration, source_item.duration) < 1000:
+            print(distance(track.duration, source_item.duration))
             print("\nFound exact match!")
             time.sleep(0.3)
             matched_track = track
