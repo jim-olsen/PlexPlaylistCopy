@@ -267,14 +267,18 @@ def main():
     print("#################")
     print("")
     
-    if target_collection is None:
-        target_section.createCollection(target_collection_title, items=collection_items)
-        print("Added new collection to target server!")
+    if len(collection_items) > 0:
+        if target_collection is None:
+            target_section.createCollection(target_collection_title, items=collection_items)
+            print("Added new collection to target server!")
+        else:
+            target_collection.addItems(collection_items)
+            print("Updated collection on target server!")
     else:
-        target_collection.addItems(collection_items)
-        print("Updated collection on target server!")
+        print("Collection could not be copied because no matching items could be found. ")
         
-    print("\n\nThe following albums could not be copied:\n")
+        
+    print("\n\nThe following items could not be copied:\n")
     for item in unmatched_items:
         print(f"No match for Album: {item.title}, Artist: {item.parentTitle}")
     

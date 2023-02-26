@@ -243,12 +243,15 @@ def main():
     print("#################")
     print("")
     
-    if target_playlist is None:
-        target_server.createPlaylist(target_playlist_title, items=playlist_items)
-        print("Added new playlist to target server!")
+    if len(playlist_items) > 0:
+        if target_playlist is None:
+            target_server.createPlaylist(target_playlist_title, items=playlist_items)
+            print("Added new playlist to target server!")
+        else:
+            target_playlist.addItems(playlist_items)
+            print("Updated playlist on target server!")
     else:
-        target_playlist.addItems(playlist_items)
-        print("Updated playlist on target server!")
+        print("Playlist could not be copied because no matching tracks could be found. ")
         
     print("\n\nThe following tracks could not be copied:\n")
     for item in unmatched_items:
