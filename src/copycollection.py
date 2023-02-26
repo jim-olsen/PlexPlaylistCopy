@@ -108,9 +108,9 @@ def find_matching_item(source_item, target_server):
 def main():
     
     cls()
-    print("##############################")
-    print("#     Plex Playlist Copy     #")
-    print("##############################")
+    print("################################")
+    print("#     Plex Collection Copy     #")
+    print("################################")
     print("To start, please log in to your Plex account.")
     print("")
     
@@ -241,7 +241,7 @@ def main():
         print("")
         
         total_items += 1
-        print(f"Attempting to match item #{total_items}:\n\nTitle:{item.title}\nArtist: {item.parentTitle}\n")
+        print(f"Attempting to match item #{total_items}:\n\nTitle:  {item.title}\nArtist: {item.parentTitle}\n")
         print("-----------------------------")
 
         matched_item = None

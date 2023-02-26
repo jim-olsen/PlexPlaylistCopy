@@ -260,7 +260,7 @@ def main():
         print("")
         
         total_tracks += 1
-        print(f"Attempting to match track #{total_tracks}:\n\nTitle:{item.title}\nAlbum: {item.parentTitle}\nArtist: {item.grandparentTitle}\n")
+        print(f"Attempting to match track #{total_tracks}:\n\nTitle:  {item.title}\nAlbum:  {item.parentTitle}\nArtist: {item.grandparentTitle}\n")
         print("-----------------------------")
 
         matched_track = None
@@ -301,10 +301,11 @@ def main():
             print("Updated playlist on target server!")
     else:
         print("Playlist could not be copied because no matching tracks could be found. ")
-        
-    print("\n\nThe following tracks could not be copied:\n")
-    for item in unmatched_items:
-        print(f"No match for Title: {item.title}, Album: {item.parentTitle}, Artist: {item.grandparentTitle}")
+    
+    if len(unmatched_items) > 0:
+        print("\n\nThe following tracks could not be copied:\n")
+        for item in unmatched_items:
+            print(f"No match for Title: {item.title}, Album: {item.parentTitle}, Artist: {item.grandparentTitle}")
     
     
 
