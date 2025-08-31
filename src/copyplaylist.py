@@ -1,5 +1,5 @@
 from plexapi.myplex import MyPlexAccount
-from plexapi.exceptions import NotFound
+from plexapi.exceptions import NotFound, BadRequest
 
 from getpass import getpass
 
@@ -282,6 +282,8 @@ def main():
                 matched_track = find_matching_item(item, target_server)
             if matched_track is None:
                 unmatched_items.append(item)
+        except BadRequest:
+            print("Search failed, skipping...")
 
         if matched_track is not None:
             playlist_items.append(matched_track)
