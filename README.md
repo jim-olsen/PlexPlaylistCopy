@@ -38,15 +38,13 @@ Then run:
 python ./src/copyplaylist.py
 ```
 
-It will prompt you for your plex username and password.
-
-### Note that your password will appear on the screen!
+It will prompt you for your plex username, password and two factor code.
 
 Then choose the source server by number from the list.
 
-Next, it will list out all playlists on that server, and again choose by entering the number from the list
-
 Then it will ask you to choose the target server, again from the list by number
+
+Next, it will list out all playlists on that server, and again choose by entering the number from the list
 
 Next it will ask you to enter the textual name of the playlist you either want to sync or create.  Enter an existing one
 to sync, or any text to create a new playlist.
